@@ -9,10 +9,10 @@
 using namespace std;
 //-------------------------------
 void writeData(const fftw_complex* const f, const int N, const double L,const char* const fname);
-
+void reading(const int N, double* inR, double& L, const char* const fname);
 //-------------------------------
 
-int main(int argc, char** argv){
+int main(int argc, char** argv){	//argc --> argument counter; char** --> pointer der auf ein array aus pointers zeigt
 
 	if(argc != 3){
 		cout << "Usage: " << argv[0] << " input_file \t output_file" << endl;
@@ -21,22 +21,22 @@ int main(int argc, char** argv){
 
 	char *in_file  = argv[1];
 	char *out_file = argv[2];
-
+	
+	//const string filename = "r.txt";
 	const int N = 16384;
 	double L;
 
 	// Allocate memory
 	fftw_complex* f = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * (N/2+1));
-	double* inR  = (double*) malloc(sizeof(double)*N);
+	double* inR  = (double*) malloc(sizeof(double)*N);// pointer auf speicherbereich für zu transformierende daten
 
   // Create plan
 	fftw_plan FW  = fftw_plan_dft_r2c_1d(N, inR, f, FFTW_ESTIMATE);
 
 	// Read input data
-
 	// Call function which reads the data from
 	// the input file into the array inR
-
+	reading(N, inR, L, in_file);
 
   // Calculate FFT
   fftw_execute(FW);
@@ -65,3 +65,12 @@ void writeData(const fftw_complex* const f, const int N, const double L,const ch
 	out.close();
 }
 //-------------------------------
+void reading(const int N, double* inR, double& L, const char* const fname){
+  ifstream in(fname);
+  for(int i=0; i<N; i++){
+    in >> L;
+    in >> inR[i];
+  }  
+  cout << L << endl;
+  in.close();
+}
